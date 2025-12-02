@@ -37,9 +37,16 @@ pipeline {
             post {
                 always {
                     // Publish test results
-                    publishTestResults testResultsPattern: 'target/surefire-reports/*.xml'
+                    junit 'target/surefire-reports/*.xml'
                     // Publish JaCoCo code coverage reports
-                    publishCoverage adapters: [jacocoAdapter('target/site/jacoco/jacoco.xml')], sourceFileResolver: sourceFiles('STORE_LAST_BUILD')
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Coverage Report'
+                    ])
                 }
             }
         }
