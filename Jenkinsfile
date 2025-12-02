@@ -1,69 +1,47 @@
 pipeline {
     agent any
-    
     tools {
-        maven 'myMaven' // Configure this in Jenkins Global Tool Configuration
-        jdk 'myJDK'        // Configure this in Jenkins Global Tool Configuration
-        // Note: Tool names must match exactly what's configured in Jenkins
-        // Go to: Manage Jenkins > Global Tool Configuration to set up tools
+        maven 'myMaven'
+        jdk 'myJDK'
     }
-    
     environment {
-        // Define environment variables
         MAVEN_OPTS = '-Xmx1024m'
     }
     
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out source code...'
-                // Source code is automatically checked out by Jenkins
-                // This stage is mainly for logging purposes
-            }
-        }
-        
         stage('Build') {
             steps {
-                echo 'Building the project...'
                 sh 'mvn clean compile'
             }
         }
-        
         stage('Test') {
             steps {
-                echo 'Running tests...'
                 sh 'mvn test'
             }
             post {
                 always {
-                    // Publish test results
                     junit 'target/surefire-reports/*.xml'
-                    // Publish JaCoCo code coverage reports
                     publishHTML([
                         allowMissing: false,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: 'target/site/jacoco',
                         reportFiles: 'index.html',
-                        reportName: 'JaCoCo Coverage Report'
+                        reportName: 'Coverage Report'
                     ])
                 }
             }
         }
-        
         stage('Package') {
             steps {
-                echo 'Packaging the application...'
                 sh 'mvn package -DskipTests'
             }
             post {
                 success {
-                    // Archive the built artifacts
-                    archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: false
+                    archiveArtifacts artifacts: 'target/*.jar'
                 }
             }
         }
-        
         stage('Deploy') {
             when {
                 anyOf {
@@ -72,30 +50,17 @@ pipeline {
                 }
             }
             steps {
-                echo 'Deploying application...'
-                // Add your deployment steps here
-                // Example: sh 'scp target/*.jar user@server:/path/to/deploy/'
-                echo 'Deployment completed successfully!'
+                echo 'Deployment placeholder'
             }
         }
     }
     
     post {
-        always {
-            echo 'Pipeline execution completed.'
-            // Clean up workspace if needed
-            // cleanWs()
-        }
         success {
-            echo 'Pipeline executed successfully!'
-            // Add notification steps for success
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline execution failed!'
-            // Add notification steps for failure
-            // emailext subject: "Pipeline Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-            //          body: "Build failed. Check Jenkins for details.",
-            //          to: "team@company.com"
+            echo 'Pipeline failed!'
         }
     }
 }
