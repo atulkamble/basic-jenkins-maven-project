@@ -46,7 +46,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
-                    branch 'appmod/java-upgrade-*'
+                    branch 'release'
                 }
             }
             steps {
