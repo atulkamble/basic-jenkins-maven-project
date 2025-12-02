@@ -45,8 +45,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    def gitBranch = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
-                    echo "Current Git branch: ${gitBranch}"
+                    // Get branch name from Jenkins environment or Git
+                    def gitBranch = env.GIT_BRANCH ?: sh(script: 'git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+                    
+                    // Remove 'origin/' prefix if present
+                    if (gitBranch.startsWith('origin/')) {
+                        gitBranch = gitBranch.replace('origin/', '')
+                    }
+                    
+                    echo "Deploying from branch: ${gitBranch}"
                     
                     if (gitBranch == 'main' || gitBranch.startsWith('appmod/java-upgrade-')) {
                         echo 'Deploying application...'
