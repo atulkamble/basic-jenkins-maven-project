@@ -2,8 +2,10 @@ pipeline {
     agent any
     
     tools {
-        maven 'MyMaven' // Configure this in Jenkins Global Tool Configuration
-        jdk 'MyJDK'        // Configure this in Jenkins Global Tool Configuration
+        maven 'myMaven' // Configure this in Jenkins Global Tool Configuration
+        jdk 'myJDK'        // Configure this in Jenkins Global Tool Configuration
+        // Note: Tool names must match exactly what's configured in Jenkins
+        // Go to: Manage Jenkins > Global Tool Configuration to set up tools
     }
     
     environment {
@@ -57,7 +59,10 @@ pipeline {
         
         stage('Deploy') {
             when {
-                branch 'main' // Only deploy from main branch
+                anyOf {
+                    branch 'main'
+                    branch 'appmod/java-upgrade-*'
+                }
             }
             steps {
                 echo 'Deploying application...'
