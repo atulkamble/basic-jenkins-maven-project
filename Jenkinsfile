@@ -46,10 +46,12 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
-                    branch 'release'
+                    branch 'appmod/java-upgrade-*'
                 }
             }
             steps {
+                echo "Current branch: ${env.BRANCH_NAME ?: 'unknown'}"
+                echo "Git branch: ${env.GIT_BRANCH ?: 'unknown'}"
                 echo 'Deployment placeholder'
             }
         }
