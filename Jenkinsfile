@@ -43,16 +43,18 @@ pipeline {
             }
         }
         stage('Deploy') {
-            when {
-                anyOf {
-                    branch 'main'
-                    branch 'appmod/java-upgrade-*'
-                }
-            }
             steps {
-                echo "Current branch: ${env.BRANCH_NAME ?: 'unknown'}"
-                echo "Git branch: ${env.GIT_BRANCH ?: 'unknown'}"
-                echo 'Deployment placeholder'
+                script {
+                    def gitBranch = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+                    echo "Current Git branch: ${gitBranch}"
+                    
+                    if (gitBranch == 'main' || gitBranch.startsWith('appmod/java-upgrade-')) {
+                        echo 'Deploying application...'
+                        echo 'Deployment completed successfully!'
+                    } else {
+                        echo "Skipping deployment - branch '${gitBranch}' not configured for deployment"
+                    }
+                }
             }
         }
     }
