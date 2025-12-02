@@ -2,8 +2,8 @@ pipeline {
     agent any
     
     tools {
-        maven 'Maven-3.8.1' // Configure this in Jenkins Global Tool Configuration
-        jdk 'JDK-21'        // Configure this in Jenkins Global Tool Configuration
+        maven 'MyMaven' // Configure this in Jenkins Global Tool Configuration
+        jdk 'MyJDK'        // Configure this in Jenkins Global Tool Configuration
     }
     
     environment {
